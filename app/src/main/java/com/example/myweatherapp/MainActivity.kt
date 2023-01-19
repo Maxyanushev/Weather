@@ -1,18 +1,14 @@
 package com.example.myweatherapp
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.lifecycle.get
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import java.util.*
 
@@ -25,23 +21,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var GET: SharedPreferences
     private lateinit var SET: SharedPreferences.Editor
 
-    private val edit_city_name: EditText = findViewById(R.id.edit_city_name)
+    private lateinit var swipe_refresh_layout: SwipeRefreshLayout
 
-    private val linear_data: LinearLayout = findViewById(R.id.linear_data)
+    private lateinit var edit_city_name: EditText
 
-    private val text_city_code: TextView = findViewById(R.id.text_city_code)
-    private val text_city_name: TextView = findViewById(R.id.text_city_name)
-    private val text_degree: TextView = findViewById(R.id.text_degree)
-    private val text_humidity: TextView = findViewById(R.id.text_humidity)
-    private val text_wind_speed: TextView = findViewById(R.id.text_wind_speed)
-    private val text_lat: TextView = findViewById(R.id.text_lat)
-    private val text_lon: TextView = findViewById(R.id.text_lon)
-    private val text_error: TextView = findViewById(R.id.text_error)
+    private lateinit var linear_data: LinearLayout
 
-    private val image_weather_pictures: ImageView = findViewById(R.id.image_weather_pictures)
-    private val image_search_city: ImageView = findViewById(R.id.image_search_city)
+    private lateinit var text_city_code: TextView
+    private lateinit var text_city_name: TextView
+    private lateinit var text_degree: TextView
+    private lateinit var text_humidity: TextView
+    private lateinit var text_wind_speed: TextView
+    private lateinit var text_lat: TextView
+    private lateinit var text_lon: TextView
+    private lateinit var text_error: TextView
 
-    private val progress_loading: ProgressBar = findViewById(R.id.progress_loading)
+    private lateinit var image_weather_pictures: ImageView
+    private lateinit var image_search_city: ImageView
+
+    private lateinit var progress_loading: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,15 +48,44 @@ class MainActivity : AppCompatActivity() {
         GET = getSharedPreferences(packageName, MODE_PRIVATE)
         SET = GET.edit()
 
-        val viewModelFactory = MyViewModelFactory(10)
-        viewmodel = ViewModelProviders.of(baseContext, viewModelFactory).get(MainViewModel::class.java)
-        viewmodel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout)
 
-        val cName = GET.getString("cityName", "kharkiv")?.lowercase(Locale.ROOT)
+        edit_city_name = findViewById(R.id.edit_city_name)
+
+        linear_data = findViewById(R.id.linear_data)
+
+        text_city_code = findViewById(R.id.text_city_code)
+        text_city_name = findViewById(R.id.text_city_name)
+        text_degree = findViewById(R.id.text_degree)
+        text_humidity = findViewById(R.id.text_humidity)
+        text_wind_speed = findViewById(R.id.text_wind_speed)
+        text_lat = findViewById(R.id.text_lat)
+        text_lon = findViewById(R.id.text_lon)
+        text_error = findViewById(R.id.text_error)
+
+        image_weather_pictures = findViewById(R.id.image_weather_pictures)
+        image_search_city = findViewById(R.id.image_search_city)
+
+        progress_loading = findViewById(R.id.progress_loading)
+
+        viewmodel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        val cName = GET.getString("cityName", "london")?.lowercase(Locale.ROOT)
         edit_city_name.setText(cName)
         viewmodel.refreshData(cName!!)
 
         getLiveData()
+
+        swipe_refresh_layout.setOnRefreshListener {
+            linear_data.visibility = View.GONE
+            text_error.visibility = View.GONE
+            progress_loading.visibility = View.GONE
+
+            val cityName = GET.getString("cityName", cName)?.lowercase(Locale.ROOT)
+            edit_city_name.setText(cityName)
+            viewmodel.refreshData(cityName!!)
+            swipe_refresh_layout.isRefreshing = false
+        }
 
         image_search_city.setOnClickListener {
             val cityName = edit_city_name.text.toString()
@@ -66,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             SET.apply()
             viewmodel.refreshData(cityName)
             getLiveData()
-            Log.i(TAG, "onCreate: " + cityName)
+            Log.i(TAG, "onCreate: $cityName")
         }
     }
 
@@ -80,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 text_city_name.text = data.name
 
                 Glide.with(this)
-                    .load("https://openweathermap.org/img/wn/" + data.weather.get(0).icon + "@2x.png")
+                    .load("https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png")
                     .into(image_weather_pictures)
 
                 text_degree.text = data.main.temp.toString() + "°C"
@@ -97,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                 if (error) {
                     text_error.visibility = View.VISIBLE
                     progress_loading.visibility = View.GONE
-//                    linear_data.visibility = View.GONE
+                    linear_data.visibility = View.GONE
                 } else {
                     text_error.visibility = View.GONE
                 }
