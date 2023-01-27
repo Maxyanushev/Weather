@@ -34,12 +34,12 @@ abstract class DataBindingBaseFragment<T : ViewDataBinding, VM : BaseViewModel<*
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        onBindViewModel()
+        onBindViewModel(viewModel)
         return binding.root
     }
 
     @CallSuper
-    protected open fun onBindViewModel() {
+    protected open fun onBindViewModel(viewModel: VM) {
         binding.lifecycleOwner = viewLifecycleOwner
     }
 
