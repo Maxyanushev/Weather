@@ -1,23 +1,21 @@
 package com.example.myweatherapp.di
 
-import android.content.SharedPreferences
+
 import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.data.WeatherAPI
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor
+//import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Headers
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -39,10 +37,6 @@ class NetworkModule {
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
 
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(OkHttpProfilerInterceptor())
-        }
-        //builder.addInterceptor(hmacInterceptor) // TODO: add the interceptor back once the api is ready for it
         return builder.build()
     }
 
@@ -64,9 +58,8 @@ class NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            //URL will be changed
             .baseUrl("http://api.openweathermap.org/")
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(JacksonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }

@@ -11,23 +11,17 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 
-
 abstract class BaseNavigationActivity<T : ViewDataBinding> : AppCompatActivity() {
-    private var _binding: T? = null
 
+    private var _binding: T? = null
     protected val binding get() = _binding!!
 
     abstract fun createBinding(): T?
 
     abstract val navHostFragment: Fragment
-
     abstract val navFragmentId: Int
-
     abstract val navigationGraph: Int
-
     private var baseGraph: NavGraph? = null
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +62,6 @@ abstract class BaseNavigationActivity<T : ViewDataBinding> : AppCompatActivity()
             findNavController(navFragmentId).setGraph(it, intent?.extras)
         }
     }
-
 
     open fun setupNavigationToolbar() {
 

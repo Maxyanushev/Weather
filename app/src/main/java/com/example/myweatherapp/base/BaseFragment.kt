@@ -21,10 +21,6 @@ abstract class BaseFragment<T : ViewDataBinding, U> : Fragment() {
     protected val binding
         get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     @LayoutRes
     open fun getLayoutResId(): Int = -1
 
@@ -36,14 +32,6 @@ abstract class BaseFragment<T : ViewDataBinding, U> : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, getLayoutResId(), container, false)
             ?: throw RuntimeException("DataBindingUtil.inflate return null")
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     open fun canNavigateUp(): Boolean {

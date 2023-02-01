@@ -1,10 +1,7 @@
 package com.example.myweatherapp.data
 
-import com.google.gson.Gson
 import retrofit2.Response
 import java.net.*
-
-private val gson by lazy { Gson() }
 
 suspend fun <T> call(call: suspend () -> Response<T>): Resource<T?> {
     runCatching {

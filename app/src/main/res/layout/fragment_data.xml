@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:background="@color/white"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,19 +12,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:minHeight="48dp"
-                android:text="Button"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/edit_city_name"
@@ -104,7 +90,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="CITY CODE"
-                        android:textColor="@color/black"
                         android:textSize="23sp" />
 
                     <TextView
@@ -149,7 +134,7 @@
                 android:background="#4DFFFFFF"
                 android:orientation="horizontal"
                 android:padding="15dp"
-                app:layout_constraintBottom_toTopOf="@+id/button2"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
